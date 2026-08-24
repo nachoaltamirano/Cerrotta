@@ -3,7 +3,7 @@
 
 insert into sedes (nombre, direccion) values
   ('Unbex', 'Pacheco 1956'),
-  ('Pfk Palermo', '3401, 6° D');
+  ('Pfk Palermo', 'Santa Fe 3401, 6° D');
 
 -- Horarios semanales: Unbex lunes y miercoles 9-12 y 14-17 (pausa 12-14). Pfk Palermo viernes 9-15.
 insert into horarios_sede (sede_id, dia_semana, hora_inicio, hora_fin, pausa_inicio, pausa_fin)
