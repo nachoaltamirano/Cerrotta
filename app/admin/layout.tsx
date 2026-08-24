@@ -14,6 +14,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <Link href="/admin" className="hover:text-primary">
               Turnos
             </Link>
+            <Link href="/admin/agenda" className="hover:text-primary">
+              Agenda
+            </Link>
             <Link href="/admin/pacientes" className="hover:text-primary">
               Pacientes
             </Link>
