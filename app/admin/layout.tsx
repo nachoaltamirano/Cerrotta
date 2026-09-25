@@ -1,8 +1,10 @@
 import Link from "next/link";
+import { logoutAction } from "@/lib/actions/auth";
+import { requerirAdmin } from "@/lib/auth/session";
 
-// TODO: proteger este layout con Supabase Auth cuando se implemente el login.
-// Por ahora /admin queda accesible sin autenticación (decisión explícita del cliente para esta etapa).
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  await requerirAdmin();
+
   return (
     <div className="flex min-h-full flex-col">
       <header className="border-b border-border bg-ink text-white">
@@ -26,12 +28,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <Link href="/" className="text-white/60 hover:text-white">
               Sitio público
             </Link>
+            <form action={logoutAction}>
+              <button type="submit" className="text-white/60 hover:text-white">
+                Salir
+              </button>
+            </form>
           </nav>
         </div>
       </header>
-      <div className="bg-amber-50 px-6 py-1.5 text-center text-xs text-amber-800">
-        Panel sin login todavía — acceso abierto de forma temporal.
-      </div>
       <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-8">{children}</main>
     </div>
   );

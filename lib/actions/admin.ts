@@ -13,6 +13,7 @@ import {
 import { upsertPacientePorDni } from "@/lib/data/pacientes";
 import { crearExcepcion, eliminarExcepcion, type NuevaExcepcion } from "@/lib/data/excepciones";
 import { getServicio } from "@/lib/data/servicios";
+import { requerirAdmin } from "@/lib/auth/session";
 import { diferenciaMinutos, sumarMinutos } from "@/lib/time";
 import type { EstadoTurno } from "@/types/domain";
 
@@ -62,6 +63,7 @@ async function resolverPacienteId(datos: DatosPaciente): Promise<string> {
 }
 
 export async function crearTurnoManualAction(input: z.infer<typeof turnoManualSchema>) {
+  await requerirAdmin();
   const datos = turnoManualSchema.parse(input);
 
   // Un turno "disponible" no fija servicio: lo elige quien lo reserva, no quien lo publica.
@@ -108,6 +110,7 @@ export async function asignarPacienteTurnoAction(
   servicioId: string,
   datosPaciente: DatosPaciente,
 ) {
+  await requerirAdmin();
   const pacienteId = await resolverPacienteId(datosPaciente);
   const tomado = await reclamarTurno(turnoId, pacienteId, servicioId);
   if (!tomado) throw new Error("Ese turno ya fue tomado por otra persona");
@@ -116,17 +119,20 @@ export async function asignarPacienteTurnoAction(
 }
 
 export async function actualizarEstadoTurnoAction(id: string, estado: EstadoTurno) {
+  await requerirAdmin();
   await actualizarEstadoTurno(id, estado);
   revalidatePath("/admin");
   revalidatePath(`/admin/turnos/${id}`);
 }
 
 export async function actualizarObservacionesTurnoAction(id: string, observaciones: string) {
+  await requerirAdmin();
   await actualizarObservacionesTurno(id, observaciones);
   revalidatePath(`/admin/turnos/${id}`);
 }
 
 export async function reprogramarTurnoAction(id: string, fecha: string, horaInicio: string) {
+  await requerirAdmin();
   const turno = await getTurno(id);
   if (!turno) throw new Error("Turno no encontrado");
   const duracion = diferenciaMinutos(turno.hora_inicio, turno.hora_fin);
@@ -137,11 +143,13 @@ export async function reprogramarTurnoAction(id: string, fecha: string, horaInic
 }
 
 export async function crearExcepcionAction(input: NuevaExcepcion) {
+  await requerirAdmin();
   await crearExcepcion(input);
   revalidatePath("/admin/configuracion");
 }
 
 export async function eliminarExcepcionAction(id: string) {
+  await requerirAdmin();
   await eliminarExcepcion(id);
   revalidatePath("/admin/configuracion");
 }
